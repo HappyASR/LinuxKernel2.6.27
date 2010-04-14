@@ -1,0 +1,98 @@
+# drivers/mtd/socle_nand/Kconfig
+# $Id: Kconfig,v 1.35 2005/11/07 11:14:30 gleixner Exp $
+
+menu "Socle NAND Flash Device Drivers"
+	depends on MTD!=n
+	depends on MTD_SOCLE_NAND_SELECT	
+
+config MTD_SOCLE_NAND
+	tristate "Socle NAND Device Support"
+	depends on MTD
+	select MTD_SOCLE_NAND_IDS
+	select MTD_SOCLE_NAND_RSCODE
+	select MTD_SOCLE_NAND_GENERIC
+	help
+	  This enables support for accessing all type of NAND flash
+	  devices. For further information see
+	  <http://www.linux-mtd.infradead.org/doc/nand.html>.
+
+config MTD_SOCLE_NAND_DEBUG
+	bool "Debugging"
+	help
+	  This turns on low-level debugging for the Socle NAND flash driver.
+	  Normally, you should say 'N'.	
+
+config MTD_SOCLE_NAND_DEBUG_VERBOSE
+	int "Debugging verbosity (0 = quiet, 3 = nosiy)"
+	depends on MTD_SOCLE_NAND_DEBUG
+	default "0"
+	help
+	  Determines the verbosity level of the Socle NAND debugging messages.
+
+config NAND_TWO_ECC_MODEL
+	bool "NFC Support two ECC correct"
+        help
+          New NFC Support 15/8 Byte ECC (6/3 bytes correct)
+
+config NAND_15B
+	bool "NAND Support 15Byte ECC (6 bytes correct)"
+	depends on NAND_TWO_ECC_MODEL
+	help
+	  NAND Support 15Byte ECC (6 bytes correct)
+	  NAND Support 8Byte ECC (3 bytes correct)
+
+config MTD_SOCLE_NAND_VERIFY_WRITE
+	bool "Verify NAND page writes"
+	depends on MTD_SOCLE_NAND
+	default y
+	help
+	  This adds an extra check when data is written to the flash. The
+	  NAND flash device internally checks only bits transitioning
+	  from 1 to 0. There is a rare possibility that even though the
+	  device thinks the write was successful, a bit could have been
+	  flipped accidentaly due to device wear or something else.
+
+config MTD_SOCLE_NAND_USE_FLASH_BBT
+	bool "Use bad block table"
+	depends on MTD_SOCLE_NAND
+	default n
+	help
+	This use the bad block tables put inside the NAND flash chip to
+	achieve the bad block managemeent.
+
+config MTD_SOCLE_NAND_WITHOUT_HWECC
+	bool "Disable hardware ecc mechanism"
+	depends on MTD_SOCLE_NAND
+	default n
+	help
+	This disable hardware ecc mechansim to use raw data access. The 
+	oob area of NAND flash chip is free for upper module. Driver will
+	not to use the oob area.
+
+config MTD_SOCLE_NAND_WEAR_LEVELING_MEASURE
+	bool "Enable the measure for wear-leveling"
+	depends on MTD_SOCLE_NAND
+	default n
+	help
+	This enable the measure for wear-leveing. You can cat the "/proc/socle_nand"
+	to see the distribution of erase count on the whole chip's blocks.	
+
+config MTD_SOCLE_NAND_PERFORMANCE_MEASURE
+	bool "Enable the measure for performance of basic read, write and erase"
+	depends on MTD_SOCLE_NAND
+	default n
+	help
+	This enable the measure for performance of basic read, write and erase.
+	Your cat cat the "/proc/socle_nand" to see the performance statistics of
+	read, write and erase.
+
+config MTD_SOCLE_NAND_IDS
+	tristate
+
+config MTD_SOCLE_NAND_RSCODE
+	tristate
+
+config MTD_SOCLE_NAND_GENERIC
+	tristate
+
+endmenu
