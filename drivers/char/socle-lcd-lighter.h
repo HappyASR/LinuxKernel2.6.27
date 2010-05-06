@@ -18,12 +18,16 @@
 
 #define USE_PWM_NUM			0		// use pwm number
 #define DEFAULT_PRE_SCL		0x0		// default Prescale Factor
-#define DEFAULT_HRC				0x10		// default HRC
-#define DEFAULT_LRC				0x15	// default LRC
+//#define DEFAULT_HRC				0x10		// default HRC
+//#define DEFAULT_LRC				0x15	// default LRC
 
 //For 7'' panel 20KHz input
 //#define DEFAULT_HRC			0x500		// default HRC
 //#define DEFAULT_LRC			0x670	// default LRC
+
+//For 7'' panel 2KHz input
+#define DEFAULT_HRC			0x5000	// default HRC
+#define DEFAULT_LRC			0x6700	// default LRC
 
 // ioctl commands
 #define SOCLE_LCD_IOC_MAGIC				'L'
