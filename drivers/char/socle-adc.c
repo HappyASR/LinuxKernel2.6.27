@@ -35,9 +35,11 @@
 
 
 #include <asm/io.h>
-#include <asm/arch/irqs.h>
-#include <asm/arch/platform.h>
-#include <asm/arch/regs-adc.h>
+
+#include <mach/irqs.h>
+#include <mach/platform.h>
+#include <mach/regs-adc.h>
+
 
 #define ADC_MAJOR 0
 #define ADC_MINOR 0 

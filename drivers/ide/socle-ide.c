@@ -5,12 +5,14 @@
 #include <linux/delay.h>
 #include <linux/init.h>
 #include <asm/io.h>
-#include <asm/arch/platform.h>
-#include <asm/arch/irqs.h>
-#include <asm/arch/regs-ide.h>
+
+
+#include <mach/platform.h>
+#include <mach/irqs.h>
+#include <mach/regs-ide.h>
 #ifdef CONFIG_ARCH_PDK_PC9002
-#include <asm/arch/regs-mp-gpio.h>
-#include <asm/arch/mp-gpio.h>
+#include <mach/regs-mp-gpio.h>
+#include <mach/mp-gpio.h>
 #endif
 
 #define ACSIDE_FPGA_IDE 1

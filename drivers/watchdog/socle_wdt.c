@@ -34,8 +34,11 @@
 #include <asm/uaccess.h>
 #include <asm/io.h>
 
-#include <asm/arch/platform.h>
-#include <asm/arch/regs-wdt.h>
+
+#include <mach/platform.h>
+#include <mach/regs-wdt.h>
+
+
 
 #if (defined(CONFIG_ARCH_CDK) || defined(CONFIG_ARCH_PDK_PC9002) || defined(CONFIG_ARCH_SCDK))
 #include <asm/arch/regs-cheetah-scu.h>

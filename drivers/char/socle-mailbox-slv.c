@@ -9,9 +9,10 @@
 #include <asm/uaccess.h>
 #include <asm/io.h>
 
-#include <asm/arch/spi-regs.h>
-#include <asm/arch/platform.h>
-#include <asm/arch/spi-mailbox.h>
+#include <mach/spi-regs.h>
+#include <mach/platform.h>
+#include <mach/spi-mailbox.h>
+
 
 static u32 mail_size[MAXMAIL];
 static u32 socle_spi_base;

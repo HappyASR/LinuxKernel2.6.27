@@ -44,9 +44,9 @@
 #include <asm/system.h>
 #include <asm/mach-types.h>
 
-#include <asm/arch/irqs.h>
-#include <asm/arch/platform.h>
-#include <asm/arch/regs-udc.h>
+#include <mach/irqs.h>
+#include <mach/platform.h>
+#include <mach/regs-udc.h>
 
 #define	DRIVER_VERSION	"28 AUG 2008"
 
