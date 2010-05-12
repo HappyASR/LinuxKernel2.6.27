@@ -1738,34 +1738,34 @@ static struct mtd_partition nand_partitions[] = {
 static struct mtd_partition nand_partitions[] = {
      {
 	  .name = "Boot Area",
-	  .offset = 0x40000,		//0x40000 - 0x80000 
+	  .offset = 0x40000,		//0x40000 - 0x80000 //0.25M
 	  .size = 256 * 1024,
      },
      {
 	  .name = "Diag Area",
-	  .offset = MTDPART_OFS_APPEND,	//0x80000 - 0x180000 
+	  .offset = MTDPART_OFS_APPEND,	//0x80000 - 0x180000 //1M
 	  .size = 1 * 1024 * 1024,					
      },
      {
 	  .name = "Kernel",
-	  .offset = MTDPART_OFS_APPEND,	//0x180000 - 0x1480000 
-	  .size = 19 * 1024 * 1024,
+	  .offset = MTDPART_OFS_APPEND,	//0x180000 - 0x1500000 //19.5M
+	  .size = 19 * 1024 * 1024 + 512 * 1024,
      },
 #ifndef CONFIG_ANDROID_SYSTEM
      {
 	  .name = "Root Filesystem",
-	  .offset = MTDPART_OFS_APPEND,	//0x1480000 - 0x3480000 
-	  .size = 32 * 1024 * 1024,//32//64
+	  .offset = MTDPART_OFS_APPEND,	//0x1500000 - 0x3500000 - 32M
+	  .size = 32 * 1024 * 1024,//32
      },
      {
-	  .name = "DEMO",
-	  .offset = MTDPART_OFS_APPEND,	//0x1480000 - 0x3480000 
-	  .size = 32 * 1024 * 1024,//32//64
+	  .name = "opt",
+	  .offset = MTDPART_OFS_APPEND,	//0x3500000 - 0x6d00000 -56M
+	  .size = 56 * 1024 * 1024 ,
      },
 #endif
      {
-	  .name = "data0",
-	  .offset = MTDPART_OFS_APPEND,	//0x3480000 - 0x5480000 - 
+	  .name = "demo",
+	  .offset = MTDPART_OFS_APPEND,	//0x6d00000 - 0x8000000 - 19M
 	  .size = MTDPART_SIZ_FULL,
      },
 };
