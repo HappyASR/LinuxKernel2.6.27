@@ -1,0 +1,25 @@
+
+
+Error Message 01
+
+<stdin>:1365:2: warning: #warning syscall epoll_pwait not implemented
+  CHK     include/linux/compile.h
+make[1]: *** No rule to make target `firmware/rt73.bin', needed by `firmware/rt73.bin.gen.o'.  Stop.
+make: *** [firmware] Error 2
+cp: cannot stat `./arch/arm/boot/uImage': No such file or directory
+
+
+Fix:
+
+  │   Location:                                                             │  
+  │     -> Device Drivers                                                   │  
+  │       -> Network device support (NETDEVICES [=y])                       │  
+  │         -> Wireless LAN                                                 │  
+  │           -> Ralink driver support (RT2X00 [=n])  
+.....
+  │ │    <*> Ralink driver support                                        │ │  
+  │ │    < >   Ralink rt2500 (USB) support                                │ │  
+  │ │    <*>   Ralink rt2501/rt73 (USB) support                           │ │  
+  │ │    [*]     Ralink rt2501/rt73 leds support
+
+don't use Ralink driver support

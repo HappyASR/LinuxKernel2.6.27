@@ -209,6 +209,9 @@ static int tsc2000_read_data(struct ts_tsc2000 *touchscreen, u16 page, u16 addr,
 	
 }
 
+#define TOUCH_MAX_DIFF	200
+
+
 static void do_touch (struct work_struct *work)
 {
 	static int pass_c = 0;
@@ -216,7 +219,7 @@ static void do_touch (struct work_struct *work)
 	static int absy = 0;
 	static int absz1 = 0;
 	static int absz2 = 0;
-	static int absz = 0;			/* absz is a pressure factor */
+	static int absz = 0,diff_x,diff_y;			/* absz is a pressure factor */
 	u16 buf[4] = {0};
 
 
@@ -255,12 +258,40 @@ static void do_touch (struct work_struct *work)
 			DEBUG("return\n");
 			return;
 		}
-		if ((absx != old_absx)&(absy != old_absy)&(pass_c > 1)) { 
-		//if ((pass_c > 1)) {			
-			input_report_key (touchscreen.socle_ts_dev, BTN_TOUCH, 1);			
+		if(pass_c == 1) {
+			old_absx=absx;
+			old_absy=absy;
+		}
+
+		if ((absx != old_absx)&(absy != old_absy)&(pass_c > 1)) { 			
+			input_report_key (touchscreen.socle_ts_dev, BTN_TOUCH, 1);	
+			
+			diff_x = abs(absx-old_absx);
+			diff_y = abs(absy-old_absy);
+			printk("\nreport_abs x:%4d, y:%4d - ",absx,absy);
+			printk("diff-x:%4d, y:%4d",diff_x,diff_y);
+			
+			if ((diff_x > TOUCH_MAX_DIFF) | (diff_y > TOUCH_MAX_DIFF)) {
+				if(diff_x > TOUCH_MAX_DIFF) {
+					if( absx > old_absx)
+						absx =old_absx + TOUCH_MAX_DIFF;
+					else
+						absx = old_absx - TOUCH_MAX_DIFF;					
+				}
+
+				if(diff_y > TOUCH_MAX_DIFF) {
+					if( absy > old_absy)
+						absy = old_absy + TOUCH_MAX_DIFF;
+					else
+						absy = old_absy - TOUCH_MAX_DIFF;
+				}
+				printk("-modify x:%4d, y:%4d ",absx,absy);
+			}
+
+
 
 #ifndef CONFIG_ANDROID_SYSTEM
-			printk("report_abs-x: %d, y: %d\n",absx,abs (absy - TS_ABS_Y_MAX));
+
 			input_report_abs (touchscreen.socle_ts_dev, ABS_X, absx);
 			input_report_abs (touchscreen.socle_ts_dev, ABS_Y, abs (absy - TS_ABS_Y_MAX));
 #else
@@ -272,6 +303,8 @@ static void do_touch (struct work_struct *work)
 			input_report_abs (touchscreen.socle_ts_dev, ABS_PRESSURE, absz);	
 
 			input_sync (touchscreen.socle_ts_dev);
+
+
 			old_absx=absx;
 			old_absy=absy;
 		}
