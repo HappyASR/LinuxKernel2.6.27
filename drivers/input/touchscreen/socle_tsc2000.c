@@ -70,21 +70,39 @@ struct ts_tsc2000 touchscreen;
 
 
 #ifndef CONFIG_ANDROID_SYSTEM
-#define USE_12BIT
+  #define BIT_RES 10
+//ADC
+//BIT15 BIT14 BIT13- 10   BIT 9-8  BIT 7-6  BIT 5-4   BIT 3-1    BIT 0
+//PSM   STS   AD3  - AD0  RS1-RS0  AV1-AV0  CL1-CL0   PV2 -PV0   X
+//1     0     0010        01       11       11        000        0       //0x89f0 8bit
+//1     0     0010        10       11       11        000        0       //0x8af0 10bit 
+//1     0     0010        11       11       11        000        0       //0x8bf0 12bit 
 
-#ifdef USE_12BIT
-#define TS_ABS_X_MIN	0
-#define TS_ABS_X_MAX	4095
-#define TS_ABS_Y_MIN	0
-#define TS_ABS_Y_MAX	4095
-#define PRESS_MAX	4095
-#else
-#define TS_ABS_X_MIN	0
-#define TS_ABS_X_MAX	255
-#define TS_ABS_Y_MIN	0
-#define TS_ABS_Y_MAX	255
-#define PRESS_MAX	255
-#endif
+  #if (BIT_RES == 12)
+	#define TS_ABS_X_MIN	0
+	#define TS_ABS_X_MAX	4095
+	#define TS_ABS_Y_MIN	0
+	#define TS_ABS_Y_MAX	4095
+	#define PRESS_MAX	4095
+	#define TSC2000_BIT_MASK	0xfff
+	#define PG1_SET_VALUE	0x8bf0
+  #elif (BIT_RES == 10)
+	#define TS_ABS_X_MIN	0
+	#define TS_ABS_X_MAX	1023
+	#define TS_ABS_Y_MIN	0
+	#define TS_ABS_Y_MAX	1023
+	#define PRESS_MAX	1023
+	#define TSC2000_BIT_MASK	0x3ff
+	#define PG1_SET_VALUE	0x8af0
+  #elif (BIT_RES == 8)
+	#define TS_ABS_X_MIN	0
+	#define TS_ABS_X_MAX	255
+	#define TS_ABS_Y_MIN	0
+	#define TS_ABS_Y_MAX	255
+	#define PRESS_MAX	255
+	#define TSC2000_BIT_MASK	0xff
+	#define PG1_SET_VALUE	0x89f0
+  #endif
 #else //manual calibration
 //#define TS_ABS_X_MIN	0xf
 //#define TS_ABS_X_MAX	0xe8
@@ -94,7 +112,10 @@ struct ts_tsc2000 touchscreen;
 #define TS_ABS_X_MAX	320
 #define TS_ABS_Y_MIN	0
 #define TS_ABS_Y_MAX	240
+#define TSC2000_BIT_MASK	0xff
+#define PG1_SET_VALUE	0x89f0
 #endif
+#define TOUCH_MAX_DIFF	(TSC2000_BIT_MASK >> 4)	
 
 #define IS_PEN_DOWN(x)  			( x & (1<<15) )
 #define TS_PAGE1_PREFIX 			(0x0800)
@@ -191,7 +212,7 @@ static int tsc2000_read_data(struct ts_tsc2000 *touchscreen, u16 page, u16 addr,
 	struct spi_transfer xfer;
 	u16 cmd=0;
 
-	dev_dbg(&touchscreen->spi->dev, "tsc2000_read_data()\n");	
+	//dev_dbg(&touchscreen->spi->dev, "tsc2000_read_data()\n");	
 	//spi_setup(touchscreen->spi);			//20080417 JS mask
 	spi_message_init(&msg);
 	memset(&xfer, 0, sizeof(struct spi_transfer));
@@ -209,7 +230,7 @@ static int tsc2000_read_data(struct ts_tsc2000 *touchscreen, u16 page, u16 addr,
 	
 }
 
-#define TOUCH_MAX_DIFF	200
+
 
 
 static void do_touch (struct work_struct *work)
@@ -225,17 +246,12 @@ static void do_touch (struct work_struct *work)
 
 	if (touchscreen.touch) {
 	spi_setup(touchscreen.spi);			//20080417 JS Add
-#ifdef USE_12BIT
+
 	tsc2000_read_data(&touchscreen, PG0, 0, buf, 1);	/* page 0, regaddr=0 */
-	absy = buf[0] & 0xfff;		/* use 12 bit resolution */  //0x3ff
+	absy = buf[0] & TSC2000_BIT_MASK;		
 	tsc2000_read_data(&touchscreen, PG0, 1, buf, 1);	/* page 0, regaddr=0 */
-	absx = buf[0] & 0xfff;		/* use 12 bit resolution */ //0x3ff
-#else
-	tsc2000_read_data(&touchscreen, PG0, 0, buf, 1);	/* page 0, regaddr=0 */
-	absy = buf[0] & 0x3ff;		/* use 10 bit resolution */  //0x3ff
-	tsc2000_read_data(&touchscreen, PG0, 1, buf, 1);	/* page 0, regaddr=0 */
-	absx = buf[0] & 0x3ff;		/* use 10 bit resolution */ //0x3ff
-#endif
+	absx = buf[0] & TSC2000_BIT_MASK;		
+
 
 	tsc2000_read_data(&touchscreen, PG0, 2, buf, 1);	/* page 0, regaddr=0 */			
 	absz1 = buf[0] & 0xfff;		/* z1 use 12 bit resolution */
@@ -344,7 +360,7 @@ static irqreturn_t socle_ts_interrupt (int irq, void *dev, struct pt_regs *regs)
 
 static int __devinit ts_tsc2000_probe(struct spi_device *spi)
 {
-	dev_dbg(&spi->dev, "ts_tsc2000_probe()\n");	
+	//dev_dbg(&spi->dev, "ts_tsc2000_probe()\n");	
 	memset(&touchscreen, 0, sizeof(struct ts_tsc2000));
 	init_MUTEX(&touchscreen.sem);
 	touchscreen.spi = spi;
@@ -376,7 +392,6 @@ static int __devinit ts_tsc2000_probe(struct spi_device *spi)
 	
 	/* Setup TSC2000 */
 	tsc2000_write_data(&touchscreen, PG1, 0x4, 0xbb00);	//RESET
-
 	tsc2000_write_data(&touchscreen, PG1, 0x5, 0x3f);	//CONFIG
 
 //ADC
@@ -384,11 +399,8 @@ static int __devinit ts_tsc2000_probe(struct spi_device *spi)
 //PSM   STS   AD3  - AD0  RS1-RS0  AV1-AV0  CL1-CL0   PV2 -PV0   X
 //1     0     0010        01       11       11        000        0       //0x89f0 8bit
 //1     0     0010        11       11       11        000        0       //0x8bf0 12bit 
-#ifdef USE_12BIT 
-	tsc2000_write_data(&touchscreen, PG1, 0x0, 0x8bf0);	
-#else
-	tsc2000_write_data(&touchscreen, PG1, 0x0, 0x89f0);	
-#endif
+	tsc2000_write_data(&touchscreen, PG1, 0x0, PG1_SET_VALUE);
+	
 	if(input_register_device (touchscreen.socle_ts_dev))
 		printk("input_register_device() failed!!!\n");
 #if defined (CONFIG_ARCH_P7DK) 
@@ -421,7 +433,7 @@ static int __devinit ts_tsc2000_probe(struct spi_device *spi)
 static int __devexit ts_tsc2000_remove(struct spi_device *spi)
 {
 
-	dev_dbg(&spi->dev, "ts_tsc2000_remove()\n");
+	//dev_dbg(&spi->dev, "ts_tsc2000_remove()\n");
 #if defined CONFIG_ARCH_P7DK
 	socle_free_gpio_irq(touchscreen.ts_irq, NULL);
 #else
