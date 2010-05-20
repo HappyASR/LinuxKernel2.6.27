@@ -1,6 +1,6 @@
 if ARCH_SOCLE
 
-comment "Socle Platform Implementations"
+comment "SQ Platform Implementations"
 
 choice
         prompt "Platform Type"

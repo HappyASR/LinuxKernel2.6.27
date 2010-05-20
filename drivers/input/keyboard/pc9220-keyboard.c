@@ -48,7 +48,7 @@ static int kpd_irq;
 static void pdk_keypad_input_report_key(void *param);
 static DECLARE_WORK(work, pdk_keypad_input_report_key, 0);
 
-static char __initdata banner[] = "SQ PDK-PC9220 KeyPad Driver, (c) 2008 SQ Corp.\n";
+static char __initdata banner[] = "SQ PDK-SQ8000 KeyPad Driver, (c) 2008 SQ Corp.\n";
 
 static void
 pdk_keypad_report_key(int row, int col)

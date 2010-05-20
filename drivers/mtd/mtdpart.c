@@ -567,7 +567,8 @@ int parse_mtd_partitions(struct mtd_info *master, const char **types,
 #ifdef CONFIG_KMOD
 		if (!parser && !request_module("%s", *types))
 				parser = get_partition_parser(*types);
-#endif
+#endif   
+		printk(KERN_NOTICE "parser.name=%s\n",parser->name);
 		if (!parser) {
 			printk(KERN_NOTICE "%s partition parsing not available\n",
 			       *types);
