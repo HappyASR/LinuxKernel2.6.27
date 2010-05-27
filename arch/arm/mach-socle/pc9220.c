@@ -296,7 +296,8 @@ socle_platform_dma_init(struct socle_dma **dma)
 	dma[1] = &panther7_hdma_channel_1;
 }
 
-MACHINE_START(SOCLE, "PDK-PC9220")
+MACHINE_START(SOCLE, "PDK-SQ8000")
+//MACHINE_START(SOCLE, "PDK-PC9220")
 	.phys_io	= 0x19000000,
 #ifdef CONFIG_MMU
 	.io_pg_offst	= ((0xfc000000) >> 18) & 0xfffc,
