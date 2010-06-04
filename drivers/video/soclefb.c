@@ -52,7 +52,7 @@ static test_int;
 #ifdef CONFIG_7INCH_PANEL
 #define PANEL_W		800
 #define PANEL_H		480
-#define H_FRONT_PORCH	255	//128//230
+#define H_FRONT_PORCH	128	//255//128//230
 #define H_BACK_PORCH	87	//0
 #define H_RESET_SYNC	12	//(256/4)
 #define H_ACTIVE	PANEL_W
@@ -60,7 +60,7 @@ static test_int;
 #define V_BACK_PORCH	18	//1
 #define V_RESET_SYNC	1	//(44/4)
 #define V_ACTIVE	PANEL_H
-#define PCLK_DIV	2	//if PCLK=66M LCD pclk = 22M ,PCLK=75 lcd_pcl 25M
+#define PCLK_DIV	3	//if PCLK=66M LCD pclk = 22M ,PCLK=75 lcd_pcl 25M
 
 #elif defined(CONFIG_10INCH_PANEL)
 #define PANEL_W		1024
