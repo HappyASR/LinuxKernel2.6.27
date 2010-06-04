@@ -62,10 +62,20 @@ static int __init socle_nand_probe(struct platform_device *pdev)
 	  .size = 56 * 1024 * 1024 ,
      },
      {
-	  .name = "demo",
+	  .name = "movies",
 	  .offset = MTDPART_OFS_APPEND,	//0x6d00000 - 0x8000000 - 19M
-	  .size = MTDPART_SIZ_FULL,
+	  .size = 56 * 1024 * 1024,
      },
+     {
+	  .name = "phto",
+	  .offset = MTDPART_OFS_APPEND,	//0xa500000 - 0x8000000 - 19M
+	  .size =  48 * 1024 * 1024,
+     },
+     {
+	  .name = "music",
+	  .offset = MTDPART_OFS_APPEND,	//0xd500000 - 0x8000000 - 19M
+	  .size = MTDPART_SIZ_FULL,
+     },     
 };
 
      struct mtd_partition *partition_info;

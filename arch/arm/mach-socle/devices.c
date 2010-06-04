@@ -1501,9 +1501,15 @@ struct platform_device ehci1_hcd_socle_device = {
 
 #endif
 
+
+
 void __init socle_add_device_ehci(void)
 {
+	
+
+
 #ifdef CONFIG_ARCH_PDK_PC9002
+
         socle_mp_gpio_set_port_num_value(MP_PA,6,0);
 #endif
 
@@ -1730,19 +1736,17 @@ static struct mtd_partition nand_partitions[] = {
 
 #else
 
-#ifndef CONFIG_ANDROID_SYSTEM
-#define DEFAULT_NUM_PARTITIONS 5
-#else
-#define DEFAULT_NUM_PARTITIONS 4
-#endif
+
+#define DEFAULT_NUM_PARTITIONS 8
+
 static struct mtd_partition nand_partitions[] = {
      {
-	  .name = "Boot Area",
+	  .name = "Boot Area 2",
 	  .offset = 0x40000,		//0x40000 - 0x80000 //0.25M
 	  .size = 256 * 1024,
      },
      {
-	  .name = "Diag Area",
+	  .name = "Diag Area 2",
 	  .offset = MTDPART_OFS_APPEND,	//0x80000 - 0x180000 //1M
 	  .size = 1 * 1024 * 1024,					
      },
@@ -1751,7 +1755,6 @@ static struct mtd_partition nand_partitions[] = {
 	  .offset = MTDPART_OFS_APPEND,	//0x180000 - 0x1500000 //19.5M
 	  .size = 19 * 1024 * 1024 + 512 * 1024,
      },
-#ifndef CONFIG_ANDROID_SYSTEM
      {
 	  .name = "Root Filesystem",
 	  .offset = MTDPART_OFS_APPEND,	//0x1500000 - 0x3500000 - 32M
@@ -1762,12 +1765,21 @@ static struct mtd_partition nand_partitions[] = {
 	  .offset = MTDPART_OFS_APPEND,	//0x3500000 - 0x6d00000 -56M
 	  .size = 56 * 1024 * 1024 ,
      },
-#endif
      {
-	  .name = "demo",
+	  .name = "movies",
 	  .offset = MTDPART_OFS_APPEND,	//0x6d00000 - 0x8000000 - 19M
-	  .size = MTDPART_SIZ_FULL,
+	  .size = 56 * 1024 * 1024,
      },
+     {
+	  .name = "phto",
+	  .offset = MTDPART_OFS_APPEND,	//0xa500000 - 0x8000000 - 19M
+	  .size =  48 * 1024 * 1024,
+     },
+     {
+	  .name = "music",
+	  .offset = MTDPART_OFS_APPEND,	//0xd500000 - 0x8000000 - 19M
+	  .size = MTDPART_SIZ_FULL,
+     },      
 };
 #endif
 
